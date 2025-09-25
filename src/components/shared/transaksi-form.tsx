@@ -35,6 +35,17 @@ import { NumberInput } from "@/components/shared/number-input";
 import { useAddTransaksi } from "@/hooks/use-add-transaksi";
 import { toast } from "sonner";
 import { useGetPengantaran } from "@/hooks/use-get-pengantaran";
+import { Separator } from "@/components/ui/separator";
+import {
+  Package,
+  Gift,
+  Calculator,
+  CreditCard,
+  Truck,
+  Receipt,
+  RotateCcw,
+  Send,
+} from "lucide-react";
 
 export default function TransaksiForm() {
   const { data: biayaPengantaran } = useGetBiayaPengantaran();
@@ -149,10 +160,12 @@ export default function TransaksiForm() {
 
     addTransaksiMutation.mutate(data, {
       onSuccess: () => {
+        toast.dismiss();
         toast.success("Transaksi berhasil ditambahkan!");
         handleClear();
       },
       onError: (error) => {
+        toast.dismiss();
         toast.error(`Gagal menambah transaksi: ${error.message}`);
       },
     });
@@ -164,27 +177,34 @@ export default function TransaksiForm() {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
-        <FormField
-          control={form.control}
-          name="jumlahGalon"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center justify-between gap-2">
-                <FormLabel>Jumlah Galon</FormLabel>
-                <div className="w-48">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {/* Produk Section */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 mb-3">
+            <Package className="w-4 h-4 text-primary" />
+            <h3 className="text-sm font-medium text-foreground">Produk</h3>
+            <div className="flex-1 h-px bg-border"></div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <FormField
+              control={form.control}
+              name="jumlahGalon"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-muted-foreground">
+                    Jumlah Galon
+                  </FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     value={field.value}
                     disabled={isLoadingJumlahGalon}
                   >
                     <FormControl>
-                      <SelectTrigger className="w-48">
+                      <SelectTrigger className="h-9">
                         <SelectValue
                           placeholder={
-                            isLoadingJumlahGalon
-                              ? "Loading..."
-                              : "Pilih jumlah galon"
+                            isLoadingJumlahGalon ? "Loading..." : "Pilih jumlah"
                           }
                         />
                       </SelectTrigger>
@@ -200,46 +220,57 @@ export default function TransaksiForm() {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="total"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center justify-between gap-2">
-                <FormLabel>Total</FormLabel>
-                <div className="w-48">
+            <FormField
+              control={form.control}
+              name="total"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-muted-foreground">
+                    Total Harga
+                  </FormLabel>
                   <FormControl>
-                    <NumberInput readOnly className="bg-gray-50" {...field} />
+                    <NumberInput
+                      readOnly
+                      className="bg-muted h-9"
+                      {...field}
+                    />
                   </FormControl>
-                </div>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
 
-        <FormField
-          control={form.control}
-          name="promo"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center justify-between gap-2">
-                <FormLabel>Promo</FormLabel>
-                <div className="w-48">
+        {/* Promo Section */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 mb-3">
+            <Gift className="w-4 h-4 text-chart-2" />
+            <h3 className="text-sm font-medium text-foreground">Promo</h3>
+            <div className="flex-1 h-px bg-border"></div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <FormField
+              control={form.control}
+              name="promo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-muted-foreground">
+                    Jenis Promo
+                  </FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     value={field.value}
                     disabled={isLoadingPromo}
                   >
                     <FormControl>
-                      <SelectTrigger className="w-48">
+                      <SelectTrigger className="h-9">
                         <SelectValue
                           placeholder={
                             isLoadingPromo ? "Loading..." : "Pilih promo"
@@ -255,110 +286,101 @@ export default function TransaksiForm() {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="freeIsiGalon"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center justify-between gap-2">
-                <FormLabel>Free Isi Galon</FormLabel>
-                <div className="w-48">
+            <FormField
+              control={form.control}
+              name="freeIsiGalon"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-muted-foreground">
+                    Free Galon
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       readOnly
-                      className="bg-gray-50"
+                      className="bg-muted h-9"
                       {...field}
                     />
                   </FormControl>
-                </div>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
-        <FormField
-          control={form.control}
-          name="totalGalon"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center justify-between gap-2">
-                <FormLabel>Jumlah Total Galon</FormLabel>
-                <div className="w-48">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <FormField
+              control={form.control}
+              name="totalGalon"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-muted-foreground">
+                    Total Galon
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="number"
                       readOnly
-                      className="bg-gray-50"
+                      className="bg-muted h-9"
                       {...field}
                     />
                   </FormControl>
-                </div>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="diskonBundling"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center justify-between gap-2">
-                <FormLabel>Diskon Bundling</FormLabel>
-                <div className="w-48">
+            <FormField
+              control={form.control}
+              name="diskonBundling"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-muted-foreground">
+                    Diskon
+                  </FormLabel>
                   <FormControl>
-                    <NumberInput readOnly className="bg-gray-50" {...field} />
+                    <NumberInput
+                      readOnly
+                      className="bg-muted h-9"
+                      {...field}
+                    />
                   </FormControl>
-                </div>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
 
-        <FormField
-          control={form.control}
-          name="subTotal"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center justify-between gap-2">
-                <FormLabel>Sub Total</FormLabel>
-                <div className="w-48">
-                  <FormControl>
-                    <NumberInput readOnly className="bg-gray-50" {...field} />
-                  </FormControl>
-                </div>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {/* Pengantaran Section */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 mb-3">
+            <Truck className="w-4 h-4 text-chart-3" />
+            <h3 className="text-sm font-medium text-foreground">Pengantaran</h3>
+            <div className="flex-1 h-px bg-border"></div>
+          </div>
 
-        <FormField
-          control={form.control}
-          name="pengantaran"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center justify-between gap-2">
-                <FormLabel>Pengantaran</FormLabel>
-                <div className="w-48">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <FormField
+              control={form.control}
+              name="pengantaran"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-muted-foreground">
+                    Antar?
+                  </FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     value={field.value}
                     disabled={isLoadingPengantaran}
                   >
                     <FormControl>
-                      <SelectTrigger className="w-48">
+                      <SelectTrigger className="h-9">
                         <SelectValue
                           placeholder={
                             isLoadingPengantaran
@@ -379,82 +401,124 @@ export default function TransaksiForm() {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="totalGalonDiantar"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center justify-between gap-2">
-                <FormLabel>Total Galon Diantar</FormLabel>
-                <div className="w-48">
+            <FormField
+              control={form.control}
+              name="totalGalonDiantar"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-muted-foreground">
+                    Galon Diantar
+                  </FormLabel>
                   <FormControl>
-                    <NumberInput {...field} />
+                    <NumberInput className="h-9" {...field} />
                   </FormControl>
-                </div>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        </div>
 
-        <FormField
-          control={form.control}
-          name="biayaPengantaran"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center justify-between gap-2">
-                <FormLabel>Biaya Pengantaran</FormLabel>
-                <div className="w-48">
+        {/* Perhitungan Section */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 mb-3">
+            <Calculator className="w-4 h-4 text-chart-4" />
+            <h3 className="text-sm font-medium text-foreground">Perhitungan</h3>
+            <div className="flex-1 h-px bg-border"></div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <FormField
+              control={form.control}
+              name="subTotal"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-muted-foreground">
+                    Sub Total
+                  </FormLabel>
                   <FormControl>
-                    <NumberInput readOnly className="bg-gray-50" {...field} />
+                    <NumberInput
+                      readOnly
+                      className="bg-muted h-9"
+                      {...field}
+                    />
                   </FormControl>
-                </div>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="grandTotal"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center justify-between gap-2">
-                <FormLabel>Grand Total</FormLabel>
-                <div className="w-48">
+            <FormField
+              control={form.control}
+              name="biayaPengantaran"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-muted-foreground">
+                    Biaya Antar
+                  </FormLabel>
                   <FormControl>
-                    <NumberInput readOnly className="bg-gray-50" {...field} />
+                    <NumberInput
+                      readOnly
+                      className="bg-muted h-9"
+                      {...field}
+                    />
                   </FormControl>
-                </div>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
-        <FormField
-          control={form.control}
-          name="caraBayar"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center justify-between gap-2">
-                <FormLabel>Cara Bayar</FormLabel>
-                <div className="w-48">
+          <FormField
+            control={form.control}
+            name="grandTotal"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-xs text-muted-foreground">
+                  Grand Total
+                </FormLabel>
+                <FormControl>
+                  <NumberInput
+                    readOnly
+                    className="bg-primary/10 border-primary/20 h-10 font-semibold"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* Pembayaran Section */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 mb-3">
+            <CreditCard className="w-4 h-4 text-chart-5" />
+            <h3 className="text-sm font-medium text-foreground">Pembayaran</h3>
+            <div className="flex-1 h-px bg-border"></div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <FormField
+              control={form.control}
+              name="caraBayar"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-muted-foreground">
+                    Metode
+                  </FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     value={field.value}
                     disabled={isLoadingCaraBayar}
                   >
                     <FormControl>
-                      <SelectTrigger className="w-48">
+                      <SelectTrigger className="h-9">
                         <SelectValue
                           placeholder={
                             isLoadingCaraBayar
@@ -472,89 +536,97 @@ export default function TransaksiForm() {
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-        <FormField
-          control={form.control}
-          name="nominalBayar"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center justify-between gap-2">
-                <FormLabel>Nominal Bayar</FormLabel>
-                <div className="w-48">
+            <FormField
+              control={form.control}
+              name="nominalBayar"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-xs text-muted-foreground">
+                    Nominal
+                  </FormLabel>
                   <FormControl>
-                    <NumberInput placeholder="Masukkan nominal" {...field} />
+                    <NumberInput placeholder="0" className="h-9" {...field} />
                   </FormControl>
-                </div>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
-        <FormField
-          control={form.control}
-          name="kembalian"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center justify-between gap-2">
-                <FormLabel>Kembalian</FormLabel>
-                <div className="w-48">
-                  <FormControl>
-                    <NumberInput
-                      readOnly
-                      allowNegative
-                      className="bg-gray-50"
-                      {...field}
-                    />
-                  </FormControl>
-                </div>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+          <FormField
+            control={form.control}
+            name="kembalian"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-xs text-muted-foreground">
+                  Kembalian
+                </FormLabel>
+                <FormControl>
+                  <NumberInput
+                    readOnly
+                    allowNegative
+                    className="bg-muted h-9"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
 
-        <FormField
-          control={form.control}
-          name="remarks"
-          render={({ field }) => (
-            <FormItem>
-              <div className="flex items-center justify-between gap-2">
-                <FormLabel>Remarks</FormLabel>
-                <div className="w-48">
-                  <FormControl>
-                    <Textarea placeholder="Masukkan keterangan" {...field} />
-                  </FormControl>
-                </div>
-              </div>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {/* Catatan Section */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2 mb-3">
+            <Receipt className="w-4 h-4 text-muted-foreground" />
+            <h3 className="text-sm font-medium text-foreground">Catatan</h3>
+            <div className="flex-1 h-px bg-border"></div>
+          </div>
 
-        <div className="flex gap-4 pt-4">
+          <FormField
+            control={form.control}
+            name="remarks"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Textarea
+                    placeholder="Masukkan keterangan tambahan..."
+                    className="resize-none h-16"
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+
+        {/* Action Buttons */}
+        <Separator className="my-4" />
+        <div className="flex gap-3">
           <Button
             type="button"
             variant="outline"
             size="lg"
-            className="flex-1"
+            className="flex-1 h-10"
             onClick={handleClear}
           >
-            Clear
+            <RotateCcw className="w-4 h-4 mr-2" />
+            Reset
           </Button>
           <Button
             type="submit"
             size="lg"
-            className="flex-1"
+            className="flex-1 h-10"
             disabled={addTransaksiMutation.isPending}
           >
-            {addTransaksiMutation.isPending ? "Loading..." : "Input"}
+            <Send className="w-4 h-4 mr-2" />
+            {addTransaksiMutation.isPending ? "Memproses..." : "Simpan"}
           </Button>
         </div>
       </form>
